@@ -13,11 +13,14 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../../components/common/Button";
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -149,7 +152,7 @@ export default function LoginScreen() {
             {/* Register link */}
             <View className="flex-row justify-center mt-4">
               <Text className="text-neutral-600">Don't have an account? </Text>
-              <Pressable>
+              <Pressable onPress={() => router.push("/auth/registration")}>
                 <Text className="text-primary-500 font-bold">Register</Text>
               </Pressable>
             </View>
