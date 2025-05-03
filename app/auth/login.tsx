@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -14,13 +13,68 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../../components/common/Button";
 import { useRouter } from "expo-router";
+import { useLoginMutation } from "../../redux/api/authApi";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CustomInput from "../../components/common/CustomInput";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/redux/feature/auth/authSlice";
+
+// Login validation schema with Zod
+const loginSchema = z.object({
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .min(6, "Email must be at least 6 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
+  const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { control, handleSubmit } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const handleLogin = async (data: LoginFormData) => {
+    try {
+      const response = await login(data).unwrap();
+
+      if (response.data?.token) {
+        await AsyncStorage.setItem("authToken", response.data.token);
+      }
+
+      if (response.data) {
+        dispatch(setCredentials(response.data));
+      }
+
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: "Login Successful",
+        textBody: "Welcome back to BorrowBuddies!",
+      });
+
+      router.replace("/(tabs)/home" as any);
+    } catch (error: any) {
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Login Failed",
+        textBody:
+          error?.data?.message || "Invalid credentials. Please try again.",
+      });
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -35,6 +89,7 @@ export default function LoginScreen() {
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
         >
+          {/* Top circle shape */}
           <View className="absolute top-0 right-0 w-64 h-64 bg-primary-100 rounded-bl-full opacity-50 z-0" />
 
           <View className="px-8 pt-16 pb-8 flex-1 z-10">
@@ -57,69 +112,35 @@ export default function LoginScreen() {
             {/* Form */}
             <View className="flex flex-col gap-5">
               {/* Email */}
-              <View className="flex flex-col gap-2">
-                <Text className="text-neutral-600 font-medium ml-1">Email</Text>
-                <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                  <Ionicons name="mail-outline" size={20} color="#737373" />
-                  <TextInput
-                    className="flex-1 ml-3 text-neutral-800"
-                    placeholder="Enter your email"
-                    placeholderTextColor="#a3a3a3"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={email}
-                    onChangeText={setEmail}
-                  />
-                </View>
-              </View>
+              <CustomInput
+                control={control}
+                name="email"
+                label="Email"
+                placeholder="Enter your email"
+                type="email"
+                disabled={isLoading}
+              />
 
               {/* Password */}
               <View>
-                <View className="flex flex-col gap-2">
-                  <Text className="text-neutral-600 font-medium ml-1">
-                    Password
-                  </Text>
-                  <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                    <Ionicons
-                      name="lock-closed-outline"
-                      size={20}
-                      color="#737373"
-                    />
-                    <TextInput
-                      className="flex-1 ml-3 text-neutral-800"
-                      placeholder="Enter your password"
-                      placeholderTextColor="#a3a3a3"
-                      secureTextEntry={!showPassword}
-                      value={password}
-                      onChangeText={setPassword}
-                    />
-                    <TouchableOpacity
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <Ionicons
-                        name={showPassword ? "eye-off-outline" : "eye-outline"}
-                        size={20}
-                        color="#737373"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* Forgot password */}
-                <TouchableOpacity className="items-end mt-2">
-                  <Text className="text-primary-500 font-medium">
-                    Forgot Password?
-                  </Text>
-                </TouchableOpacity>
+                <CustomInput
+                  control={control}
+                  name="password"
+                  label="Password"
+                  placeholder="Enter your password"
+                  type="password"
+                  disabled={isLoading}
+                />
               </View>
 
               {/* Login button */}
               <View className="mt-6">
                 <Button
                   title="Sign In"
-                  onPress={() => {}}
+                  onPress={handleSubmit(handleLogin)}
                   variant="primary"
                   fullWidth
+                  isLoading={isLoading}
                 />
               </View>
 
@@ -149,7 +170,7 @@ export default function LoginScreen() {
               </View>
             </View>
 
-            {/* Register link */}
+            {/* Registration page link */}
             <View className="flex-row justify-center mt-4">
               <Text className="text-neutral-600">Don't have an account? </Text>
               <Pressable onPress={() => router.push("/auth/registration")}>
@@ -158,7 +179,7 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Bottom circle element */}
+          {/* Bottom circle shape */}
           <View
             className="absolute bottom-0 left-0 w-64 h-64 bg-secondary-100 rounded-tr-full opacity-50 z-0"
             pointerEvents="none"

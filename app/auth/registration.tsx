@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -14,13 +13,72 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../../components/common/Button";
 import { router } from "expo-router";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CustomInput from "../../components/common/CustomInput";
+import CustomSelect from "../../components/common/CustomSelect";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import { useRegisterMutation } from "../../redux/api/authApi";
+
+// Gender
+const genderOptions = [
+  { label: "Male", value: "MALE" },
+  { label: "Female", value: "FEMALE" },
+];
+
+// Registration validation schema with Zod
+const registrationSchema = z.object({
+  name: z.string().min(3, "Full name must be at least 3 characters"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .min(6, "Email must be at least 6 characters"),
+  gender: z.string().min(1, "Please select a gender"),
+  location: z.string().min(3, "Please enter your location"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export default function RegisterScreen() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [register, { isLoading }] = useRegisterMutation();
+
+  const { control, handleSubmit } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      location: "",
+      gender: "",
+    },
+  });
+
+  const handleRegistration = async (data: RegistrationFormData) => {
+    try {
+      const newUserData = {
+        ...data,
+        role: "USER",
+      };
+      await register(newUserData).unwrap();
+
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: "Registration Successful",
+        textBody: "Your account has been created successfully.",
+      });
+
+      router.replace("/auth/login");
+    } catch (error: any) {
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Registration Failed",
+        textBody:
+          error?.data?.message || "Could not create account. Please try again.",
+      });
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -66,96 +124,64 @@ export default function RegisterScreen() {
             {/* Form */}
             <View className="flex flex-col gap-5">
               {/* Full Name */}
-              <View className="flex flex-col gap-2">
-                <Text className="text-neutral-600 font-medium ml-1">
-                  Full Name
-                </Text>
-                <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                  <Ionicons name="person-outline" size={20} color="#737373" />
-                  <TextInput
-                    className="flex-1 ml-3 text-neutral-800"
-                    placeholder="Enter your full name"
-                    placeholderTextColor="#a3a3a3"
-                    autoCapitalize="words"
-                    value={fullName}
-                    onChangeText={setFullName}
-                  />
-                </View>
-              </View>
+              <CustomInput
+                control={control}
+                name="name"
+                label="Full Name"
+                placeholder="Enter your full name"
+                icon="person-outline"
+                disabled={isLoading}
+              />
 
               {/* Email */}
-              <View className="flex flex-col gap-2">
-                <Text className="text-neutral-600 font-medium ml-1">Email</Text>
-                <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                  <Ionicons name="mail-outline" size={20} color="#737373" />
-                  <TextInput
-                    className="flex-1 ml-3 text-neutral-800"
-                    placeholder="Enter your email"
-                    placeholderTextColor="#a3a3a3"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    value={email}
-                    onChangeText={setEmail}
-                  />
-                </View>
-              </View>
-
-              {/* Phone */}
-              <View className="flex flex-col gap-2">
-                <Text className="text-neutral-600 font-medium ml-1">
-                  Phone Number
-                </Text>
-                <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                  <Ionicons name="call-outline" size={20} color="#737373" />
-                  <TextInput
-                    className="flex-1 ml-3 text-neutral-800"
-                    placeholder="Enter your phone number"
-                    placeholderTextColor="#a3a3a3"
-                    keyboardType="phone-pad"
-                    value={phone}
-                    onChangeText={setPhone}
-                  />
-                </View>
-              </View>
+              <CustomInput
+                control={control}
+                name="email"
+                label="Email"
+                placeholder="Enter your email"
+                type="email"
+                disabled={isLoading}
+              />
 
               {/* Password */}
-              <View className="flex flex-col gap-2">
-                <Text className="text-neutral-600 font-medium ml-1">
-                  Password
-                </Text>
-                <View className="flex-row items-center bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={20}
-                    color="#737373"
-                  />
-                  <TextInput
-                    className="flex-1 ml-3 text-neutral-800"
-                    placeholder="Create a password"
-                    placeholderTextColor="#a3a3a3"
-                    secureTextEntry={!showPassword}
-                    value={password}
-                    onChangeText={setPassword}
-                  />
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    <Ionicons
-                      name={showPassword ? "eye-off-outline" : "eye-outline"}
-                      size={20}
-                      color="#737373"
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
+              <CustomInput
+                control={control}
+                name="password"
+                label="Password"
+                placeholder="Create a password"
+                type="password"
+                disabled={isLoading}
+              />
+
+              {/* Location */}
+              <CustomInput
+                control={control}
+                name="location"
+                label="Location"
+                placeholder="Enter your city"
+                icon="location-outline"
+                disabled={isLoading}
+              />
+
+              {/* Gender */}
+              <CustomSelect
+                control={control}
+                name="gender"
+                label="Gender"
+                placeholder="Select your gender"
+                icon="person-outline"
+                options={genderOptions}
+                disabled={isLoading}
+              />
 
               {/* Register button */}
               <View className="mt-6">
                 <Button
                   title="Create Account"
-                  onPress={() => {}}
+                  onPress={handleSubmit(handleRegistration)}
                   variant="primary"
                   fullWidth
+                  isLoading={isLoading}
                 />
               </View>
 
