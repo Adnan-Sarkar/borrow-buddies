@@ -3,15 +3,14 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import Providers from "../lib/Provider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import {
-  selectCurrentToken,
-  setCredentials,
-} from "../redux/feature/auth/authSlice";
+import { setCredentials } from "../redux/feature/auth/authSlice";
 import "../global.css";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   return (
     <Providers>
+      <StatusBar backgroundColor="black" />
       <RootLayoutNav />
     </Providers>
   );
@@ -48,7 +47,7 @@ function RootLayoutNav() {
       router.replace("/auth/login");
     } else if (token && inAuthGroup) {
       // has token, redirect to home
-      router.replace("/(tabs)/home/index");
+      router.replace("/(tabs)/home" as any);
     }
   }, [token, segments]);
 
