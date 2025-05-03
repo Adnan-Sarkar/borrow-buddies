@@ -1,17 +1,18 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import type { TypedUseSelectorHook } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import rootReducer from "./rootReducer";
-import baseApi from "./api/baseApi";
+import { baseApi } from "./api/baseApi";
 
 export const store = configureStore({
-  reducer: rootReducer as any,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ["persist/PERSIST"],
       },
-    }).concat(baseApi?.middleware),
+    }).concat(baseApi.middleware),
 });
 
 setupListeners(store.dispatch);

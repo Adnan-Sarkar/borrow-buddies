@@ -1,9 +1,9 @@
-import baseApi from "./api/baseApi";
-import { authSlice } from "./feature/auth/authSlice";
+import { baseApi } from "./api/baseApi";
+import authReducer from "./feature/auth/authSlice";
 
 const rootReducer = {
-  [baseApi?.reducerPath]: baseApi?.reducer,
-  auth: authSlice,
+  [baseApi.reducerPath]: baseApi.reducer,
+  auth: authReducer,
 };
 
 export default rootReducer;

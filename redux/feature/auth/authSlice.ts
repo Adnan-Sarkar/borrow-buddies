@@ -1,61 +1,43 @@
-// redux/slices/authSlice.ts
-import { RootState } from "@/redux/store";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
 
 type User = {
-  id: string;
-  fullName: string;
-  email: string;
-  phone?: string;
+  id?: string;
+  name?: string;
+  email?: string;
+  role?: string;
 };
 
 type AuthState = {
   user: User | null;
   token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
 };
 
 const initialState: AuthState = {
   user: null,
   token: null,
-  isAuthenticated: false,
-  isLoading: true,
 };
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setCredentials: (
-      state,
-      action: PayloadAction<{ user: User; token: string }>
-    ) => {
-      const { user, token } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.isAuthenticated = true;
-      state.isLoading = false;
+    setCredentials: (state, action: PayloadAction<any>) => {
+      state.token = action.payload.token;
+      const { token, ...userData } = action.payload;
+      state.user = userData;
     },
     clearCredentials: (state) => {
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-    },
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
     },
   },
 });
 
-export const { setCredentials, clearCredentials, setLoading } =
-  authSlice.actions;
+export const { setCredentials, clearCredentials } = authSlice.actions;
 
-// Selectors
 export const selectCurrentUser = (state: RootState) => state.auth.user;
-export const selectIsAuthenticated = (state: RootState) =>
-  state.auth.isAuthenticated;
-export const selectIsLoading = (state: RootState) => state.auth.isLoading;
+export const selectCurrentToken = (state: RootState) => state.auth.token;
 
 export default authSlice.reducer;
