@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import baseApi from "./baseApi";
+import { baseApi } from "./baseApi";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,21 +8,17 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         data: credentials,
       }),
+    }),
 
-      async onQueryStarted(_, { queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          console.log(data);
-          if (data.token) {
-            await AsyncStorage.setItem("authToken", data.token);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      },
+    register: builder.mutation({
+      query: (userData) => ({
+        url: "/auth/registration",
+        method: "POST",
+        data: userData,
+      }),
     }),
   }),
-  overrideExisting: false,
+  overrideExisting: true,
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation, useRegisterMutation } = authApi;
