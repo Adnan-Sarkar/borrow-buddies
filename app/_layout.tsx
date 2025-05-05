@@ -1,17 +1,34 @@
 import { useEffect } from "react";
 import { Slot, useRouter, useSegments } from "expo-router";
 import Providers from "../lib/Provider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { setCredentials } from "../redux/feature/auth/authSlice";
+import {
+  setCredentials,
+  clearCredentials,
+} from "../redux/feature/auth/authSlice";
 import "../global.css";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import { StatusBar as RNStatusBar, View, Platform } from "react-native";
+import Constants from "expo-constants";
+import { getValidToken } from "../utils/jwt-helper";
 
 export default function RootLayout() {
+  if (Platform.OS === "android") {
+    RNStatusBar.setBackgroundColor("black");
+    RNStatusBar.setTranslucent(true);
+  }
+
   return (
     <Providers>
-      <StatusBar backgroundColor="black" />
-      <RootLayoutNav />
+      <View
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === "ios" ? Constants.statusBarHeight : 0,
+        }}
+      >
+        <ExpoStatusBar style="dark" />
+        <RootLayoutNav />
+      </View>
     </Providers>
   );
 }
@@ -26,13 +43,17 @@ function RootLayoutNav() {
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("authToken");
+        const validToken = await getValidToken();
 
-        if (storedToken) {
-          dispatch(setCredentials({ token: storedToken }));
+        if (validToken) {
+          dispatch(setCredentials({ token: validToken }));
+        } else {
+          // If token is invalid or expired, clear credentials
+          dispatch(clearCredentials());
         }
       } catch (error) {
-        console.error("Failed to get authentication token", error);
+        console.error("Failed to validate authentication token", error);
+        dispatch(clearCredentials());
       }
     };
 
