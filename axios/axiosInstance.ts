@@ -1,12 +1,11 @@
 import axios from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { ApiResponse } from "../types/api.types";
 
-// Update the BASE_URL with your actual IP address
-const BASE_URL = "http://192.168.0.108:3800/api"; // Your actual IP address
-// For Android emulator you can also use: "http://10.0.2.2:3800/api"
-// For iOS simulator use: "http://localhost:3800/api"
+const BASE_URL = "http://192.168.0.108:3800/api";
 
-const axiosInstance = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
@@ -14,13 +13,13 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
-// Request interceptor to include auth token in requests
+// Request interceptor
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
       const token = await AsyncStorage.getItem("authToken");
       if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
+        config.headers["Authorization"] = `${token}`;
       }
     } catch (error) {
       console.error("Error getting token for request:", error);
@@ -30,18 +29,33 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle common errors
+// Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  <T>(response: AxiosResponse<ApiResponse<T> | T>): AxiosResponse<T> => {
+    const { data } = response;
 
-    // Handle 401 Unauthorized errors (token expired)
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      await AsyncStorage.removeItem("authToken");
+    // Check if response follows the standard API structure
+    if (
+      data &&
+      typeof data === "object" &&
+      "success" in data &&
+      "statusCode" in data &&
+      "message" in data &&
+      "data" in data
+    ) {
+      return {
+        ...response,
+        data: (data as ApiResponse<T>).data,
+      };
     }
+
+    return response as AxiosResponse<T>;
+  },
+  async (error) => {
+    // Handle token expiry or other errors
+    // if (error.response?.status === 401) {
+    //   await AsyncStorage.removeItem("authToken");
+    // }
 
     return Promise.reject(error);
   }
