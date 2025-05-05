@@ -51,12 +51,12 @@ export default function LoginScreen() {
     try {
       const response = await login(data).unwrap();
 
-      if (response.data?.token) {
-        await AsyncStorage.setItem("authToken", response.data.token);
+      if (response?.token) {
+        await AsyncStorage.setItem("authToken", response.token);
       }
 
-      if (response.data) {
-        dispatch(setCredentials(response.data));
+      if (response) {
+        dispatch(setCredentials(response));
       }
 
       Toast.show({
