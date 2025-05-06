@@ -24,6 +24,8 @@ interface CustomInputProps<T extends FieldValues> {
   control: Control<T>;
   error?: FieldError;
   disabled?: boolean;
+  value?: string;
+  editable?: boolean;
 }
 
 function CustomInput<T extends FieldValues>({
@@ -35,6 +37,8 @@ function CustomInput<T extends FieldValues>({
   control,
   error,
   disabled = false,
+  value,
+  editable,
 }: CustomInputProps<T>) {
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -74,10 +78,12 @@ function CustomInput<T extends FieldValues>({
       control={control}
       name={name}
       render={({
-        field: { onChange, onBlur, value },
+        field: { onChange, onBlur, value: fieldValue },
         fieldState: { error: fieldError },
       }) => {
         const inputError = error || fieldError;
+        const displayValue = value !== undefined ? value : fieldValue || "";
+        const isEditableField = editable !== undefined ? editable : !disabled;
 
         return (
           <View className="flex flex-col gap-2 mb-4">
@@ -103,7 +109,7 @@ function CustomInput<T extends FieldValues>({
                 className="flex-1 ml-3 text-neutral-800"
                 placeholder={placeholder}
                 placeholderTextColor={COLORS.NEUTRAL[400]}
-                value={value}
+                value={displayValue}
                 onChangeText={onChange}
                 onBlur={() => {
                   setIsFocused(false);
@@ -113,9 +119,11 @@ function CustomInput<T extends FieldValues>({
                 secureTextEntry={type === "password" && !isPasswordVisible}
                 keyboardType={getKeyboardType()}
                 autoCapitalize={type === "email" ? "none" : "sentences"}
-                editable={!disabled}
-                selectTextOnFocus={!disabled}
-                style={disabled ? { color: COLORS.NEUTRAL[400] } : undefined}
+                editable={isEditableField}
+                selectTextOnFocus={isEditableField}
+                style={
+                  !isEditableField ? { color: COLORS.NEUTRAL[400] } : undefined
+                }
               />
 
               {/* Toggle button for password visibility */}
