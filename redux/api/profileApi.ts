@@ -8,10 +8,30 @@ export const profileApi = baseApi.injectEndpoints({
         url: "/profile",
         method: "GET",
       }),
-
       providesTags: [tagTypes.profile],
+    }),
+
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: "/profile",
+        method: "PATCH",
+        data,
+      }),
+      invalidatesTags: [tagTypes.profile],
+    }),
+
+    getProfileById: builder.query({
+      query: (id) => ({
+        url: `/profile/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.userProfile],
     }),
   }),
 });
 
-export const { useGetMyProfileQuery } = profileApi;
+export const {
+  useGetMyProfileQuery,
+  useUpdateProfileMutation,
+  useGetProfileByIdQuery,
+} = profileApi;
