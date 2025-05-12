@@ -43,10 +43,7 @@ axiosInstance.interceptors.response.use(
       "message" in data &&
       "data" in data
     ) {
-      return {
-        ...response,
-        data: (data as ApiResponse<T>).data,
-      };
+      return response as AxiosResponse<T>;
     }
 
     return response as AxiosResponse<T>;

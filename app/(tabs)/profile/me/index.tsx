@@ -16,7 +16,19 @@ import { useGetMyProfileQuery } from "@/redux/api/profileApi";
 import LocationSection from "./components/LocationSection";
 
 export default function ProfileViewScreen() {
-  const { data: profile, isLoading, error } = useGetMyProfileQuery({});
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useGetMyProfileQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result?.data?.data,
+      }),
+    }
+  );
 
   const renderProfileImage = () => {
     if (profile?.profilePicture) {

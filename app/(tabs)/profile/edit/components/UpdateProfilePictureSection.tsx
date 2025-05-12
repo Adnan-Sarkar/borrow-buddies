@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../../../../constants/Colors";
@@ -21,6 +21,12 @@ const UpdateProfilePictureSection = ({
     profileData?.profilePicture || null
   );
   const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    if (profileData?.profilePicture) {
+      setProfileImage(profileData.profilePicture);
+    }
+  }, [profileData]);
 
   const handleUpdateProfilePicture = async () => {
     try {
@@ -79,13 +85,7 @@ const UpdateProfilePictureSection = ({
           formData.append("profilePicture", fileObject as any);
 
           // Use the new uploadFormData utility
-          const result = await uploadFormData(
-            "/profile",
-            formData,
-            "PATCH",
-            tagTypes.profile
-          );
-          console.log("Upload success:", result);
+          await uploadFormData("/profile", formData, "PATCH", tagTypes.profile);
 
           Toast.show({
             type: ALERT_TYPE.SUCCESS,

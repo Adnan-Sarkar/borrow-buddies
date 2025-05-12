@@ -11,7 +11,15 @@ import { useGetMyProfileQuery } from "@/redux/api/profileApi";
 import { COLORS } from "../../../../constants/Colors";
 
 const ProfileCard = () => {
-  const { data, isLoading } = useGetMyProfileQuery({});
+  const { data, isLoading } = useGetMyProfileQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result?.data?.data,
+      }),
+    }
+  );
 
   const renderProfileImage = () => {
     if (isLoading) {

@@ -18,7 +18,15 @@ import { useGetMyProfileQuery } from "@/redux/api/profileApi";
 import UpdateProfilePictureSection from "./components/UpdateProfilePictureSection";
 
 export default function EditProfileScreen() {
-  const { data: profileData, isLoading } = useGetMyProfileQuery({});
+  const { data: profileData, isLoading } = useGetMyProfileQuery(
+    {},
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result?.data?.data,
+      }),
+    }
+  );
   const { scrollTo } = useLocalSearchParams();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
