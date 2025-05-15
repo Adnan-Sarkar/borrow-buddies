@@ -4,6 +4,8 @@ import { COLORS } from "../../constants/Colors";
 import { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { getValidToken } from "../../utils/jwt-helper";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function TabsLayout() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -74,7 +76,7 @@ export default function TabsLayout() {
         options={{
           title: "My Items",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list" size={size} color={color} />
+            <FontAwesome5 name="store" size={size} color={color} />
           ),
         }}
       />
@@ -83,7 +85,7 @@ export default function TabsLayout() {
         options={{
           title: "Community",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
+            <FontAwesome6 name="people-group" size={size} color={color} />
           ),
         }}
       />
