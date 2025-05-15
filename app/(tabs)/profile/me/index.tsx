@@ -190,7 +190,7 @@ export default function ProfileViewScreen() {
           )}
 
           {/* Location Section */}
-          {profile?.location && (
+          {profile?.location && profile?.latitude && profile?.longitude && (
             <LocationSection
               location={profile?.location}
               latitude={profile?.latitude}

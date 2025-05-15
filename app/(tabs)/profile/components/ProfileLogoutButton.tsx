@@ -14,6 +14,7 @@ import { useAppDispatch } from "../../../../redux/store";
 import { clearCredentials } from "../../../../redux/feature/auth/authSlice";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import { router } from "expo-router";
+import baseApi from "@/redux/api/baseApi";
 
 const ProfileLogoutButton = () => {
   const dispatch = useAppDispatch();
@@ -21,8 +22,12 @@ const ProfileLogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("authToken");
+      dispatch(baseApi.util.resetApiState());
       dispatch(clearCredentials());
+
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("user");
+
       setModalVisible(false);
 
       Toast.show({
