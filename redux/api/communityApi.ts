@@ -1,41 +1,6 @@
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
 
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  likes: number;
-  comments: number;
-  hasLiked: boolean;
-  createdAt: string;
-  updatedAt: string;
-  user: {
-    id: string;
-    name: string;
-    profileImage?: string;
-  };
-}
-
-interface PostDetail extends Post {
-  commentList?: Comment[];
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  postId: string;
-  authorId: string;
-  createdAt: string;
-  updatedAt: string;
-  author: {
-    id: string;
-    name: string;
-    profileImage?: string;
-  };
-}
-
 export const communityApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getPosts: builder.query({
@@ -48,12 +13,12 @@ export const communityApi = baseApi.injectEndpoints({
     }),
 
     // Get a single post by ID with comments
-    getPostById: builder.query<PostDetail, string>({
+    getPostById: builder.query({
       query: (id) => ({
         url: `/community/posts/${id}`,
         method: "GET",
       }),
-      providesTags: [tagTypes.communityPost],
+      providesTags: [tagTypes.communityPost, tagTypes.communityReport],
     }),
 
     // Delete a post by ID
@@ -101,11 +66,12 @@ export const communityApi = baseApi.injectEndpoints({
 
     // Report a post
     reportPost: builder.mutation({
-      query: ({ postId, reason }) => ({
-        url: `/community/posts/${postId}/report`,
+      query: ({ postId, data }) => ({
+        url: `/community/reports/post/${postId}`,
         method: "POST",
-        data: { reason },
+        data: data,
       }),
+      invalidatesTags: [tagTypes.communityReport],
     }),
   }),
 });
