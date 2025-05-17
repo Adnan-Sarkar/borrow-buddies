@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
-import {
-  COLORS,
-  PRIMARY_COLOR,
-  NEUTRAL_COLOR,
-  ERROR_COLOR,
-} from "../../constants/Colors";
+import { COLORS, ERROR_COLOR } from "../../constants/Colors";
 
 interface CustomTextAreaProps {
   label: string;
@@ -16,6 +11,7 @@ interface CustomTextAreaProps {
   numberOfLines?: number;
   className?: string;
   error?: any;
+  disabled?: boolean;
 }
 
 const CustomTextArea = ({
@@ -26,6 +22,7 @@ const CustomTextArea = ({
   numberOfLines = 4,
   className = "",
   error: propError,
+  disabled = false,
 }: CustomTextAreaProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -47,6 +44,7 @@ const CustomTextArea = ({
                 className={`flex-row items-start bg-neutral-50 border rounded-xl px-4 py-3
                   ${isFocused ? "border-primary-500" : "border-neutral-200"}
                   ${error ? "border-red-500" : ""}
+                  ${disabled ? "bg-neutral-100 opacity-70" : ""}
                   ${className}`}
               >
                 <TextInput
@@ -60,12 +58,16 @@ const CustomTextArea = ({
                   placeholder={placeholder}
                   multiline
                   numberOfLines={numberOfLines}
-                  className={`flex-1 text-neutral-800 text-base`}
+                  className={`flex-1 text-neutral-800 text-base ${
+                    disabled ? "text-neutral-500" : ""
+                  }`}
                   style={styles.input}
                   placeholderTextColor={COLORS.NEUTRAL[400]}
+                  editable={!disabled}
+                  selectTextOnFocus={!disabled}
                 />
               </View>
-              {error && (
+              {error && !disabled && (
                 <Text
                   style={{ color: ERROR_COLOR }}
                   className="text-xs ml-1 mt-1"
