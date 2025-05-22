@@ -15,9 +15,17 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     isFetching: isFetchingComments,
     error: commentsError,
     refetch: refetchComments,
-  } = useGetPostCommentsQuery({
-    postId,
-  });
+  } = useGetPostCommentsQuery(
+    {
+      postId,
+    },
+    {
+      selectFromResult: (result) => ({
+        ...result,
+        data: result?.data,
+      }),
+    }
+  );
 
   if (isLoadingComments && !isFetchingComments) {
     return <LoadingIndicator />;
@@ -29,11 +37,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
     );
   }
 
-  const comments = commentsData?.comments ?? [];
+  const comments = commentsData?.data ?? [];
   const totalComments = commentsData?._count?.comments ?? 0;
 
   return (
-    <View className="pb-20">
+    <View className="pb-2">
       {/* Comment input */}
       <View className="px-4 py-3 border-t border-neutral-100">
         <CommentInput postId={postId} />
