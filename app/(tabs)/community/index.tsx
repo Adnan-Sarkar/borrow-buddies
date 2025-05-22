@@ -7,6 +7,7 @@ import CommunityPosts from "./components/CommunityPosts";
 import { COLORS } from "../../../constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDebounce } from "@/hooks/useDebounce";
+import NotificationBadge from "@/components/common/NotificationBadge";
 
 export default function CommunityScreen() {
   const router = useRouter();
@@ -25,9 +26,13 @@ export default function CommunityScreen() {
         className="bg-white border-b border-neutral-100"
         style={{ paddingTop: insets.top + 8, paddingBottom: 12 }}
       >
-        <Text className="text-2xl font-bold text-neutral-900 px-5 mb-3 mt-2">
-          Community
-        </Text>
+        {/* community header */}
+        <View className="flex-row items-center justify-between px-5 mb-4 mt-4">
+          <Text className="text-2xl font-bold text-neutral-900">Community</Text>
+          <View className="flex-row items-center">
+            <NotificationBadge dark={true} />
+          </View>
+        </View>
 
         <View className="flex-row items-center bg-neutral-50 mx-5 px-3 h-10 rounded-lg border border-neutral-200">
           <Ionicons name="search" size={18} color={COLORS.NEUTRAL[400]} />
