@@ -2,7 +2,7 @@ import { format, formatDistanceToNow } from "date-fns";
 
 export function formatDate(
   dateString: string,
-  formatPattern: string = "MMM d"
+  formatPattern: string = "MMM d, yyyy"
 ): string {
   try {
     const date = new Date(dateString);
