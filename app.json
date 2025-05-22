@@ -7,11 +7,12 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to display it on the map."
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to display it on the map.",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -19,36 +20,35 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "config": {
-        "googleMaps": {
-          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY_HERE"
-        }
-      },
       "permissions": [
+        "android.permission.INTERNET",
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ]
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "package": "com.aduvai.borrowbuddies"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
+    "extra": {
+      "eas": {
+        "projectId": "4e20489f-fb44-4757-98dd-7e9125baa403"
+      },
+      "router": {
+        "origin": false
+      }
+    },
     "plugins": [
       "expo-router",
       [
-        "expo-splash-screen",
+        "expo-notifications",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff"
         }
       ],
       [
@@ -60,6 +60,7 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "aduvai"
   }
 }
