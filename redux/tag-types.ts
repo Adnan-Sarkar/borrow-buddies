@@ -5,6 +5,8 @@ export enum tagTypes {
   communityPost = "communityPost",
   communityComment = "communityComment",
   communityReport = "communityReport",
+  items = "items",
+  category = "category",
 }
 
 export const tagTypesList = [
@@ -14,4 +16,6 @@ export const tagTypesList = [
   tagTypes.communityPost,
   tagTypes.communityComment,
   tagTypes.communityReport,
+  tagTypes.items,
+  tagTypes.category,
 ];
