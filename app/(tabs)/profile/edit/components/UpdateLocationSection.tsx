@@ -185,10 +185,6 @@ const UpdateLocationSection = ({ profileData }: LocationSectionProps) => {
 
       const { latitude, longitude } = locationData.coords;
 
-      // Get address based on coordinates
-      const address = await getAddressFromCoordinates(latitude, longitude);
-
-      setValue("location", address, { shouldDirty: true });
       setValue("latitude", latitude);
       setValue("longitude", longitude);
 
@@ -232,7 +228,7 @@ const UpdateLocationSection = ({ profileData }: LocationSectionProps) => {
           />
 
           {/* Display coordinates if available */}
-          {(latitude !== 0 || longitude !== 0) && (
+          {latitude !== 0 || longitude !== 0 ? (
             <View className="bg-neutral-50 p-3 rounded-lg mb-4 mt-1">
               <Text className="text-sm text-neutral-500 mb-1">
                 Coordinates:
@@ -252,7 +248,7 @@ const UpdateLocationSection = ({ profileData }: LocationSectionProps) => {
                 </View>
               </View>
             </View>
-          )}
+          ) : null}
 
           {/* Get current Location Button */}
           <TouchableOpacity

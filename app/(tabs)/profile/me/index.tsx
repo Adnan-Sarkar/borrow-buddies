@@ -96,7 +96,7 @@ export default function ProfileViewScreen() {
             <Text className="mt-4 text-white text-2xl font-bold">
               {profile?.name}
             </Text>
-            {profile?.email && (
+            {profile?.email ? (
               <View className="flex-row items-center mt-1">
                 <Ionicons
                   name="mail-outline"
@@ -107,7 +107,7 @@ export default function ProfileViewScreen() {
                   {profile.email}
                 </Text>
               </View>
-            )}
+            ) : null}
           </View>
         </View>
 
@@ -137,7 +137,7 @@ export default function ProfileViewScreen() {
                   </View>
                 </View>
 
-                {profile?.phoneNumber && (
+                {profile?.phoneNumber ? (
                   <View className="flex-row items-center">
                     <View className="w-8 h-8 bg-primary-50 rounded-full items-center justify-center">
                       <Ionicons
@@ -154,10 +154,10 @@ export default function ProfileViewScreen() {
                       </Text>
                     </View>
                   </View>
-                )}
+                ) : null}
               </View>
 
-              {profile?.phoneNumber && (
+              {profile?.phoneNumber ? (
                 <TouchableOpacity
                   className="mt-3 bg-primary-50 py-2 rounded-lg flex-row justify-center items-center"
                   onPress={() => Linking.openURL(`tel:${profile.phoneNumber}`)}
@@ -167,12 +167,12 @@ export default function ProfileViewScreen() {
                     Call
                   </Text>
                 </TouchableOpacity>
-              )}
+              ) : null}
             </View>
           </View>
 
           {/* About Section */}
-          {profile?.bio && (
+          {profile?.bio ? (
             <View className="bg-white rounded-xl shadow-sm overflow-hidden mb-4 border border-neutral-100">
               <View className="bg-success-50 px-4 py-3 border-b border-neutral-200">
                 <Text className="text-success-700 font-semibold text-base">
@@ -187,17 +187,17 @@ export default function ProfileViewScreen() {
                 )}
               </View>
             </View>
-          )}
+          ) : null}
 
           {/* Location Section */}
-          {profile?.location && profile?.latitude && profile?.longitude && (
+          {profile?.location && profile?.latitude && profile?.longitude ? (
             <LocationSection
               location={profile?.location}
               latitude={profile?.latitude}
               longitude={profile?.longitude}
               name={profile?.name}
             />
-          )}
+          ) : null}
 
           {/* Account Stats */}
           <View className="bg-white rounded-xl shadow-sm overflow-hidden mb-4 border border-neutral-100">
