@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, TextInput, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  Text,
+  TouchableOpacity,
+  type KeyboardTypeOptions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   COLORS,
@@ -13,12 +19,14 @@ import {
   type FieldValues,
   type FieldError,
   type Path,
+  type RegisterOptions,
 } from "react-hook-form";
 
 interface CustomInputProps<T extends FieldValues> {
   label: string;
   placeholder?: string;
-  icon?: keyof typeof Ionicons.glyphMap;
+  icon?: keyof typeof Ionicons.glyphMap | null;
+  showIcon?: boolean;
   type?: "email" | "password" | "text" | "phone" | "number";
   name: Path<T>;
   control: Control<T>;
@@ -26,12 +34,15 @@ interface CustomInputProps<T extends FieldValues> {
   disabled?: boolean;
   value?: string;
   editable?: boolean;
+  keyboardType?: KeyboardTypeOptions;
+  rules?: RegisterOptions<T, Path<T>>;
 }
 
 function CustomInput<T extends FieldValues>({
   label,
   placeholder = "",
   icon,
+  showIcon = true,
   type = "text",
   name,
   control,
@@ -39,11 +50,15 @@ function CustomInput<T extends FieldValues>({
   disabled = false,
   value,
   editable,
+  keyboardType,
+  rules,
 }: CustomInputProps<T>) {
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const getIconName = (): keyof typeof Ionicons.glyphMap => {
+  const getIconName = (): keyof typeof Ionicons.glyphMap | null => {
+    if (icon === null || !showIcon) return null;
+
     if (icon) return icon;
 
     switch (type) {
@@ -60,7 +75,10 @@ function CustomInput<T extends FieldValues>({
     }
   };
 
-  const getKeyboardType = () => {
+  // Determine keyboard type
+  const determineKeyboardType = (): KeyboardTypeOptions => {
+    if (keyboardType) return keyboardType;
+
     switch (type) {
       case "email":
         return "email-address";
@@ -77,6 +95,7 @@ function CustomInput<T extends FieldValues>({
     <Controller
       control={control}
       name={name}
+      rules={rules}
       render={({
         field: { onChange, onBlur, value: fieldValue },
         fieldState: { error: fieldError },
@@ -84,6 +103,7 @@ function CustomInput<T extends FieldValues>({
         const inputError = error || fieldError;
         const displayValue = value !== undefined ? value : fieldValue || "";
         const isEditableField = editable !== undefined ? editable : !disabled;
+        const iconName = getIconName();
 
         return (
           <View className="flex flex-col gap-2 mb-4">
@@ -94,19 +114,23 @@ function CustomInput<T extends FieldValues>({
                 ${inputError ? "border-red-500" : ""}
               `}
             >
-              <Ionicons
-                name={getIconName()}
-                size={20}
-                color={
-                  isFocused
-                    ? PRIMARY_COLOR
-                    : inputError
-                    ? ERROR_COLOR
-                    : NEUTRAL_COLOR
-                }
-              />
+              {/* Only render icon if iconName is not null */}
+              {iconName && (
+                <Ionicons
+                  name={iconName}
+                  size={20}
+                  color={
+                    isFocused
+                      ? PRIMARY_COLOR
+                      : inputError
+                      ? ERROR_COLOR
+                      : NEUTRAL_COLOR
+                  }
+                />
+              )}
+
               <TextInput
-                className="flex-1 ml-3 text-neutral-800"
+                className={`flex-1 ${iconName ? "ml-3" : ""} text-neutral-800`}
                 placeholder={placeholder}
                 placeholderTextColor={COLORS.NEUTRAL[400]}
                 value={displayValue}
@@ -117,7 +141,7 @@ function CustomInput<T extends FieldValues>({
                 }}
                 onFocus={() => setIsFocused(true)}
                 secureTextEntry={type === "password" && !isPasswordVisible}
-                keyboardType={getKeyboardType()}
+                keyboardType={determineKeyboardType()}
                 autoCapitalize={type === "email" ? "none" : "sentences"}
                 editable={isEditableField}
                 selectTextOnFocus={isEditableField}
