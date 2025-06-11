@@ -41,7 +41,6 @@ const PostContent: React.FC<PostContentProps> = ({ post, refetch }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [liked, setLiked] = useState(post?.hasLiked || false);
   const [likeCount, setLikeCount] = useState(post?._count?.reactions || 0);
-  // Add state for modal and selected image
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [toggleLike] = useTogglePostLikeMutation();
@@ -58,7 +57,6 @@ const PostContent: React.FC<PostContentProps> = ({ post, refetch }) => {
     setLiked(!liked);
     setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
 
-    // Call API with correct parameters
     toggleLike(post.id)
       .unwrap()
       .then(() => {

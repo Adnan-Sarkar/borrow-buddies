@@ -107,3 +107,8 @@ export const ContentSkeleton: React.FC = () => (
     <View className="h-40 bg-neutral-100 w-full rounded-lg" />
   </View>
 );
+
+// Default export to satisfy Expo Router
+export default function StateComponents() {
+  return null;
+}
