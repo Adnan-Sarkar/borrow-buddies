@@ -30,10 +30,27 @@ export const itemsApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.items],
     }),
 
+    getItemDetails: builder.query({
+      query: (itemId) => ({
+        url: `/items/${itemId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.items],
+    }),
+
     cretaeItem: builder.mutation({
       query: (data) => ({
         url: "/items",
         method: "POST",
+        data: data,
+      }),
+      invalidatesTags: [tagTypes.items],
+    }),
+
+    updateItem: builder.mutation({
+      query: (data) => ({
+        url: `/items/${data?.id}`,
+        method: "PATCH",
         data: data,
       }),
       invalidatesTags: [tagTypes.items],
@@ -45,5 +62,7 @@ export const {
   useGetAllItemsQuery,
   useGetFeaturedItemsQuery,
   useGetNearbyItemsQuery,
+  useGetItemDetailsQuery,
   useCretaeItemMutation,
+  useUpdateItemMutation,
 } = itemsApi;

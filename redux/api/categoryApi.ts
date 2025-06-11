@@ -5,7 +5,7 @@ export const CategoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllCategories: builder.query({
       query: (params) => ({
-        url: "/categoris",
+        url: "/categories",
         method: "GET",
         params: params,
       }),
