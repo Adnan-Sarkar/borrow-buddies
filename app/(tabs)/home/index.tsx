@@ -8,8 +8,11 @@ import HowItWorksSection from "./components/HowItWorksSection";
 import TestimonialsSection from "./components/TestimonialsSection";
 import BenefitsSection from "./components/BenefitsSection";
 import CTASection from "./components/CTASection";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 export default function HomeScreen() {
+  usePushNotifications();
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar
