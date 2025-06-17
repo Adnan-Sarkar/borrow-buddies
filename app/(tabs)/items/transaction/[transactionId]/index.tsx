@@ -22,6 +22,8 @@ import { useGetTransactionDetailsQuery } from "@/redux/api/transactionApi";
 import StatusBanner from "./components/StatusBanner";
 import HandoverButton from "./components/HandoverButton";
 import getCurrentUserDetails from "@/utils/getCurrentUserDetails";
+import TransactionLocation from "./components/TransactionLocation";
+import CompleteTransactionButton from "./components/CompleteTransactionButton";
 
 export default function TransactionDetailsScreen() {
   const insets = useSafeAreaInsets();
@@ -151,6 +153,15 @@ export default function TransactionDetailsScreen() {
           onSuccess={refetch}
         />
 
+        {/* Pickup location in Mapview */}
+        <TransactionLocation
+          destinationLocation={
+            safeTransaction.item.location || "Pickup Location"
+          }
+          destinationLatitude={safeTransaction.item.latitude}
+          destinationLongitude={safeTransaction.item.longitude}
+        />
+
         {/* Participant Details */}
         <ParticipantDetails
           owner={safeTransaction.owner}
@@ -167,6 +178,14 @@ export default function TransactionDetailsScreen() {
           paymentMethod={safeTransaction.paymentMethod}
         />
 
+        {/* Transaction Complete */}
+        <CompleteTransactionButton
+          transactionId={safeTransaction.id}
+          isOwner={isOwner}
+          status={safeTransaction.status}
+          onSuccess={refetch}
+        />
+
         {/* Timeline Section */}
         <TimelineSection
           status={safeTransaction.status}
@@ -177,12 +196,14 @@ export default function TransactionDetailsScreen() {
         />
 
         {/* Evidence Section */}
-        {/* <EvidenceSection
+        <EvidenceSection
           evidence={safeTransaction.Evidence}
           transactionId={safeTransaction.id}
           canAddEvidence={canAddEvidence}
           onRefresh={refetch}
-        /> */}
+          isOwner={isOwner}
+          status={safeTransaction.status}
+        />
       </ScrollView>
 
       {/* Action Buttons */}

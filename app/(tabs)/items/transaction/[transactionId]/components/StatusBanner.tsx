@@ -28,7 +28,7 @@ export default function StatusBanner({
       case "ACTIVE":
         return COLORS.PRIMARY[500];
       case "COMPLETED":
-        return COLORS.NEUTRAL[700];
+        return COLORS.SUCCESS[500];
       case "REJECTED":
         return COLORS.ERROR[500];
       default:
@@ -152,7 +152,7 @@ export default function StatusBanner({
     <View>
       {/* Header */}
       <View style={{ paddingTop: insets.top, backgroundColor }}>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle="dark-content" backgroundColor={"white"} />
         <View className="flex-row items-center justify-between px-4 py-3">
           <TouchableOpacity
             onPress={() => router.back()}

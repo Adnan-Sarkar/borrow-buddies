@@ -39,6 +39,15 @@ export const getStatusInfo = (status: string): StatusInfo => {
         iconColor: COLORS.NEUTRAL[500],
         label: "Completed",
       };
+    case "ACTIVE":
+      return {
+        bgColor: "bg-primary-50",
+        textColor: "text-primary-700",
+        borderColor: "border-primary-200",
+        icon: "time-outline",
+        iconColor: COLORS.PRIMARY[500],
+        label: "Active",
+      };
     default:
       return {
         bgColor: "bg-neutral-50",

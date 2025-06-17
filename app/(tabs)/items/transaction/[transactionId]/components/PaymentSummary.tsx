@@ -24,7 +24,7 @@ export default function PaymentSummary({
   const totalAmount = amountNum + depositNum + feeNum;
 
   return (
-    <View className="px-4 mt-6">
+    <View className="px-4 my-6">
       <Text className="text-neutral-800 font-semibold text-lg mb-3">
         Payment Details
       </Text>

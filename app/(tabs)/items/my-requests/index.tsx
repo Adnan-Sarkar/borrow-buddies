@@ -30,6 +30,8 @@ export default function MyRequestsScreen() {
     refetch,
   } = useGetMyBorrowingRequestsQuery(filters);
 
+  console.log(JSON.stringify(requests, null, 2));
+
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();

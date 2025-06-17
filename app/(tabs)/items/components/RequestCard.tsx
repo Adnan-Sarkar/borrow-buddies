@@ -122,19 +122,30 @@ export default function RequestCard({
           />
         )}
 
-        {type === "lendRequest" && request.status === "APPROVED" && (
-          <View className="mt-3 flex-row items-center justify-center">
-            <Link href={`/(tabs)/items/transaction/${request.id}`} asChild>
-              <TouchableOpacity
-                className="flex-row items-center justify-center w-full py-3 px-4 bg-primary-500 rounded-lg shadow-sm active:opacity-90"
-                style={{ elevation: 1 }}
-              >
-                <Ionicons name="eye-outline" size={18} color="white" />
-                <Text className="text-white font-medium ml-2">
-                  View Transaction Details
-                </Text>
-              </TouchableOpacity>
-            </Link>
+        {type === "lendRequest" && (
+          <View className="flex flex-col gap-3">
+            <StatusTimeline
+              status={request.status}
+              updatedAt={request.updatedAt}
+            />
+
+            {(request.status === "APPROVED" ||
+              request.status === "ACTIVE" ||
+              request.status === "COMPLETED") && (
+              <View className="mt-3 flex-row items-center justify-center">
+                <Link href={`/(tabs)/items/transaction/${request.id}`} asChild>
+                  <TouchableOpacity
+                    className="flex-row items-center justify-center w-full py-3 px-4 bg-primary-500 rounded-lg shadow-sm active:opacity-90"
+                    style={{ elevation: 1 }}
+                  >
+                    <Ionicons name="eye-outline" size={18} color="white" />
+                    <Text className="text-white font-medium ml-2">
+                      View Transaction Details
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+              </View>
+            )}
           </View>
         )}
 
@@ -145,7 +156,9 @@ export default function RequestCard({
               updatedAt={request.updatedAt}
             />
 
-            {request?.status === "APPROVED" && (
+            {(request.status === "APPROVED" ||
+              request.status === "ACTIVE" ||
+              request.status === "COMPLETE") && (
               <View className="mt-3 flex-row items-center justify-center">
                 <Link href={`/(tabs)/items/transaction/${request.id}`} asChild>
                   <TouchableOpacity

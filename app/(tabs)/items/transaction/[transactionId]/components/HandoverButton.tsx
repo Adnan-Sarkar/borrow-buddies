@@ -101,7 +101,7 @@ export default function HandoverButton({
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         transactionId={transactionId}
-        evidenceType="HANDOVER"
+        evidenceType={isOwner ? "HANDOVER" : "PICKUP"}
         onSuccess={() => {
           setIsModalVisible(false);
           onSuccess();
