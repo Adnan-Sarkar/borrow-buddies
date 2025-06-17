@@ -17,7 +17,7 @@ import { COLORS } from "@/constants/Colors";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useAddEvidenceMutation } from "@/redux/api/transactionApi";
+import { useSubmitEvidenceMutation } from "@/redux/api/transactionApi";
 
 // Define Zod schema
 const evidenceSchema = z.object({
@@ -44,7 +44,7 @@ export default function AddEvidenceModal({
   onSuccess,
 }: AddEvidenceModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [addEvidence] = useAddEvidenceMutation();
+  const [addEvidence] = useSubmitEvidenceMutation();
 
   const {
     control,
@@ -173,23 +173,38 @@ export default function AddEvidenceModal({
     try {
       setIsSubmitting(true);
 
-      // Uncomment this when API is ready
-      // await addEvidence({
-      //   transactionId,
-      //   description: data.description,
-      //   evidenceType,
-      //   images: data.images
-      // }).unwrap();
+      const formData = new FormData();
 
-      // Simulate API call for now
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (data.notes) {
+        formData.append("notes", data.notes);
+      }
 
-      if (onSuccess) onSuccess();
-      resetForm();
-      onClose();
+      formData.append("type", evidenceType);
+
+      // Append each image with proper metadata
+      if (data.images && data.images.length > 0) {
+        data.images.forEach((imageUri, index) => {
+          const imageUriParts = imageUri.split(".");
+          const fileType = imageUriParts[imageUriParts.length - 1];
+
+          formData.append("images", {
+            uri: imageUri,
+            name: `evidence_${index}.${fileType}`,
+            type: `image/${fileType}`,
+          } as any);
+        });
+      }
+
+      const res = await addEvidence({
+        id: transactionId,
+        evidence: formData,
+      });
+
+      if (res) {
+        onSuccess?.();
+      }
     } catch (error) {
       console.error("Failed to add evidence:", error);
-      alert("Failed to add evidence. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -63,10 +63,13 @@ export const transactionApi = baseApi.injectEndpoints({
     }),
 
     submitEvidence: builder.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id, evidence }) => ({
         url: `/transactions/${id}/evidence`,
         method: "POST",
-        data: data,
+        data: evidence,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }),
       invalidatesTags: [tagTypes.transaction],
     }),
@@ -81,4 +84,5 @@ export const {
   useApproveTransactionRequestMutation,
   useRejectTransactionRequestMutation,
   useCompleteTransactionRequestMutation,
+  useSubmitEvidenceMutation,
 } = transactionApi;
