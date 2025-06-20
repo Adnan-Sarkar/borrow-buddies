@@ -74,7 +74,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="items"
         options={{
-          title: "My Items",
+          title: "Sharing Hub",
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="store" size={size} color={color} />
           ),

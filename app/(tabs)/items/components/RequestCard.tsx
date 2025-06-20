@@ -114,14 +114,6 @@ export default function RequestCard({
           paymentMethod={request.paymentMethod}
         />
 
-        {type === "lendRequest" && request.status === "REQUESTED" && (
-          <ActionButtons
-            onApprove={() => handleStatusUpdate("APPROVED")}
-            onReject={() => handleStatusUpdate("REJECTED")}
-            isProcessing={isProcessing}
-          />
-        )}
-
         {type === "lendRequest" && (
           <View className="flex flex-col gap-3">
             <StatusTimeline
@@ -147,6 +139,14 @@ export default function RequestCard({
               </View>
             )}
           </View>
+        )}
+
+        {type === "lendRequest" && request.status === "REQUESTED" && (
+          <ActionButtons
+            onApprove={() => handleStatusUpdate("APPROVED")}
+            onReject={() => handleStatusUpdate("REJECTED")}
+            isProcessing={isProcessing}
+          />
         )}
 
         {type === "myRequest" && request.status !== "REQUESTED" && (
