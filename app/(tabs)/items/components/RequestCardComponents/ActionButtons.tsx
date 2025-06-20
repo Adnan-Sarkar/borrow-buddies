@@ -13,7 +13,7 @@ export default function ActionButtons({
   isProcessing,
 }: ActionButtonsProps) {
   return (
-    <View className="flex-row gap-3 mt-1">
+    <View className="flex-row gap-3 mt-3">
       <TouchableOpacity
         onPress={onReject}
         disabled={isProcessing}
